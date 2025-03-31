@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.EventSystems;
 using RaveTown.Events.Customevents;
@@ -11,6 +10,8 @@ namespace RaveTown.Items
 public class ItemDragHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler
 {
     [SerializeField] protected ItemSlotUI itemSlotUI = null;
+    [SerializeField] protected HotbarItemEvent onMouseStartHoverItem = null;
+    [SerializeField] protected VoidEvent onMouseEndHoverItem = null;
     private CanvasGroup canvasGroup = null;
     private Transform originalParent = null;
     private bool isHovering = false;
@@ -21,7 +22,7 @@ public class ItemDragHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     {
         if(isHovering)
         {
-            //rasie event
+            onMouseEndHoverItem.Raise();
             isHovering = false;
         }
     }
@@ -29,7 +30,7 @@ public class ItemDragHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     {
         if(eventData.button == PointerEventData.InputButton.Left)
         {
-            //raise event
+            onMouseEndHoverItem.Raise();
             originalParent = transform.parent;
             transform.SetParent(transform.parent.parent);
             canvasGroup.blocksRaycasts = false;
@@ -54,13 +55,13 @@ public class ItemDragHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHan
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
+        onMouseStartHoverItem.Raise(ItemSlotUI.SlotItem);
         isHovering = true;
-        //raise event
     }
     public void OnPointerExit(PointerEventData eventData)
     {
+        onMouseEndHoverItem.Raise();
         isHovering = false;
-        //raise event
     }
 }
 }
